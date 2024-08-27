@@ -1,5 +1,5 @@
 
-# Custom Heap Memory Manager
+# Linux Memory Manager
 
 ## Overview
 
@@ -42,24 +42,24 @@ This project implements a custom Heap Memory Manager in C, which provides replac
 
 Clone the repository to your local machine:
 
-\`\`\`bash
-git clone https://github.com/your-username/custom-heap-memory-manager.git
-cd custom-heap-memory-manager
-\`\`\`
+```bash
+git clone https://github.com/mohamedaymankills/inux-Memory-Manager.git
+
+```
 
 ### Usage
 
 To compile the code, use the following command:
 
-\`\`\`bash
+```bash
 gcc -o custom_memory_manager custom_memory_manager.c -Wall -Wextra
-\`\`\`
+```
 
 Run the compiled executable:
 
-\`\`\`bash
+```bash
 ./custom_memory_manager
-\`\`\`
+```
 
 ## Implementation Details
 
@@ -68,7 +68,7 @@ Run the compiled executable:
 The `HmmAlloc` function is responsible for allocating memory on the heap. It uses the `sbrk()` system call to increase the program's data space. The function ensures that the allocated memory is properly aligned by adjusting the pointer returned by `sbrk()`.
 
 **Code:**
-\`\`\`c
+```c
 void* HmmAlloc(size_t size) {
     void* ptr = sbrk(size + sizeof(void*)); 
     if (ptr == (void*)-1) {
@@ -77,55 +77,55 @@ void* HmmAlloc(size_t size) {
     uintptr_t aligned = ((uintptr_t)ptr + sizeof(void*) - 1) & ~(sizeof(void*) - 1);
     return (void*)aligned;
 }
-\`\`\`
+```
 
 ### HmmFree Function
 
 The `HmmFree` function is a placeholder in this implementation. Since `sbrk()` does not support deallocation, the function would typically manage a free list or another structure to recycle memory. This is an area where further development can take place.
 
 **Code:**
-\`\`\`c
+```c
 void HmmFree(void* ptr) {
     // Implement your own memory deallocation logic here
     // sbrk does not support deallocation, so this function might
     // manage a free list or similar structure.
 }
-\`\`\`
+```
 
 ### Custom malloc Implementation
 
 The custom `malloc` function leverages `HmmAlloc` to allocate memory. It handles the special case where the requested size is zero by returning `NULL`, as per the standard `malloc` behavior.
 
 **Code:**
-\`\`\`c
+```c
 void* malloc(size_t size) {
     if (size == 0) {
         return NULL;
     }
     return HmmAlloc(size);
 }
-\`\`\`
+```
 
 ### Custom free Implementation
 
 The custom `free` function uses `HmmFree` to deallocate memory. It checks for a `NULL` pointer to ensure that no action is taken for invalid free operations.
 
 **Code:**
-\`\`\`c
+```c
 void free(void* ptr) {
     if (ptr == NULL) {
         return;
     }
     HmmFree(ptr);
 }
-\`\`\`
+```
 
 ### Custom calloc Implementation
 
 The custom `calloc` function allocates memory for an array of elements and initializes the allocated memory to zero. It uses `HmmAlloc` for memory allocation and `memset` for initialization.
 
 **Code:**
-\`\`\`c
+```c
 void* calloc(size_t nmemb, size_t size) {
     size_t total_size = nmemb * size;
     void* ptr = HmmAlloc(total_size);
@@ -134,14 +134,14 @@ void* calloc(size_t nmemb, size_t size) {
     }
     return ptr;
 }
-\`\`\`
+```
 
 ### Custom realloc Implementation
 
 The custom `realloc` function resizes the memory block pointed to by `ptr`. It handles the cases where `ptr` is `NULL` or `size` is zero, mimicking the behavior of the standard `realloc`.
 
 **Code:**
-\`\`\`c
+```c
 void* realloc(void* ptr, size_t size) {
     if (ptr == NULL) {
         return HmmAlloc(size);
@@ -157,7 +157,7 @@ void* realloc(void* ptr, size_t size) {
     }
     return new_ptr;
 }
-\`\`\`
+```
 
 ## Testing
 
